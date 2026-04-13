@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Book;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class AdminBookController extends Controller
@@ -11,13 +12,16 @@ class AdminBookController extends Controller
     public function index()
     {
         $books = Book::latest()->get();
+        $books = Book::with('category')->latest()->get();
 
         return view('admin.books.index', compact('books'));
     }
 
     public function create()
     {
-        return view('admin.books.create');
+        $categories = Category::all();
+
+        return view('admin.books.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -26,7 +30,8 @@ class AdminBookController extends Controller
             'title' => 'required',
             'author' => 'required',
             'stock' => 'required|integer',
-            'cover' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'category_id' => 'required|exists:categories,id',
+            'cover' => 'nullable|image',
         ]);
 
         if ($request->hasFile('cover')) {
@@ -38,18 +43,24 @@ class AdminBookController extends Controller
         return redirect()->route('admin.books.index');
     }
 
-    public function edit(Book $book)
+    public function edit($id)
     {
-        return view('admin.books.edit', compact('book'));
+        $book = Book::findOrFail($id);
+        $categories = Category::all();
+
+        return view('admin.books.edit', compact('book', 'categories'));
     }
 
-    public function update(Request $request, Book $book)
+    public function update(Request $request, $id)
     {
+        $book = Book::findOrFail($id);
+
         $data = $request->validate([
             'title' => 'required',
             'author' => 'required',
             'stock' => 'required|integer',
-            'cover' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'category_id' => 'required|exists:categories,id',
+            'cover' => 'nullable|image',
         ]);
 
         if ($request->hasFile('cover')) {

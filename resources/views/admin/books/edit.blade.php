@@ -40,6 +40,22 @@
                         class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
                 </div>
 
+                {{-- Categories --}}
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Category</label>
+
+                    <select name="category_id" class="w-full border p-2 rounded">
+
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" {{ $book->category_id == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+
+                    </select>
+                </div>
+
+                {{-- Cover --}}
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         Cover

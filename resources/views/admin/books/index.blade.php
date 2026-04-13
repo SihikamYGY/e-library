@@ -18,6 +18,7 @@
                     <th class="p-3">Title</th>
                     <th class="p-3">Author</th>
                     <th class="p-3">Stock</th>
+                    <th class="p-3">Category</th>
                     <th class="p-3 text-center">Action</th>
                 </tr>
             </thead>
@@ -45,6 +46,12 @@
                                 class="px-2 py-1 text-sm rounded 
                         {{ $book->stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                 {{ $book->stock }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
+                                {{ $book->category->name ?? '-' }}
                             </span>
                         </td>
 

@@ -21,7 +21,7 @@
                 <a href="{{ route('admin.books.index') }}" class="block hover:text-gray-300">Books</a>
             </li>
             <li>
-                <a href="#" class="block hover:text-gray-300">Categories</a>
+                <a href="{{ route('admin.categories.index') }}" class="block hover:text-gray-300">Categories</a>
             </li>
             <li>
                 <a href="#" class="block hover:text-gray-300">Loans</a>
