@@ -24,7 +24,7 @@
                 <a href="{{ route('admin.categories.index') }}" class="block hover:text-gray-300">Categories</a>
             </li>
             <li>
-                <a href="#" class="block hover:text-gray-300">Loans</a>
+                <a href="{{ route('admin.loans.index') }}" class="block hover:text-gray-300">Loans</a>
             </li>
             <li class="mt-5">
                 <a href="/" class="text-sm text-gray-400">← Back to Homepage</a>

@@ -38,6 +38,32 @@
                     @enderror
                 </div>
 
+                {{-- ISBN --}}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        ISBN
+                    </label>
+                    <input type="text" name="isbn" value="{{ old('isbn') }}"
+                        class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+
+                    @error('isbn')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Publisher --}}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Publisher
+                    </label>
+                    <input type="text" name="publisher" value="{{ old('publisher') }}"
+                        class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+
+                    @error('publisher')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 {{-- Stock --}}
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-1">

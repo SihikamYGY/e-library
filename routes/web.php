@@ -9,17 +9,35 @@ use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| PUBLIC
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
     return view('welcome');
 });
 
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD REDIRECT
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/dashboard', function () {
     if (auth()->user()->role === 'admin') {
-        return redirect('/admin/dashboard');
+        return redirect()->route('admin.dashboard');
     }
 
-    return redirect('/'); // nanti ke homepage user
+    return redirect('/books');
 })->middleware(['auth'])->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| PROFILE (AUTH)
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -27,28 +45,61 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// USER
-// Route::get('/', [HomeController::class, 'index']);
-Route::get('/books', [BookController::class, 'index']);
-Route::get('/books/{id}', [BookController::class, 'show']);
+/*
+|--------------------------------------------------------------------------
+| USER AREA
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/{id}', [BookController::class, 'show'])->name('books.show');
 
 Route::middleware('auth')->group(function () {
-    Route::post('/loans', [LoanController::class, 'store']);
-    Route::get('/my-loans', [LoanController::class, 'myLoans']);
+
+    // 📥 Request loan
+    Route::post('/loans/{book}', [LoanController::class, 'store'])
+        ->name('loans.store');
+
+    // 🔁 Request return
+    Route::post('/loans/{loan}/return', [LoanController::class, 'returnRequest'])
+        ->name('loans.return');
+
+    // 📋 My loans
+    Route::get('/my-loans', [LoanController::class, 'myLoans'])
+        ->name('loans.my');
 });
 
-// ADMIN
+/*
+|--------------------------------------------------------------------------
+| ADMIN AREA
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
+        // 📊 Dashboard
         Route::get('/dashboard', [AdminController::class, 'index'])
             ->name('dashboard');
 
+        // 📚 Books & Categories
         Route::resource('books', AdminBookController::class);
         Route::resource('categories', CategoryController::class);
-        Route::resource('loans', AdminLoanController::class);
+
+        // 🔥 LOANS SYSTEM (FIXED)
+        Route::get('/loans', [AdminLoanController::class, 'index'])
+            ->name('loans.index');
+
+        Route::post('/loans/{loan}/approve', [AdminLoanController::class, 'approve'])
+            ->name('loans.approve');
+
+        Route::post('/loans/{loan}/reject', [AdminLoanController::class, 'reject'])
+            ->name('loans.reject');
+
+        Route::post('/loans/{loan}/approve-return', [AdminLoanController::class, 'approveReturn'])
+            ->name('loans.approveReturn');
     });
 
 require __DIR__.'/auth.php';

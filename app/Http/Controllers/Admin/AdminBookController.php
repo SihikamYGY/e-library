@@ -11,7 +11,6 @@ class AdminBookController extends Controller
 {
     public function index()
     {
-        $books = Book::latest()->get();
         $books = Book::with('category')->latest()->get();
 
         return view('admin.books.index', compact('books'));
@@ -29,6 +28,8 @@ class AdminBookController extends Controller
         $data = $request->validate([
             'title' => 'required',
             'author' => 'required',
+            'isbn' => 'required',
+            'publisher' => 'required',
             'stock' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
             'cover' => 'nullable|image',
@@ -58,6 +59,8 @@ class AdminBookController extends Controller
         $data = $request->validate([
             'title' => 'required',
             'author' => 'required',
+            'isbn' => 'required',
+            'publisher' => 'required',
             'stock' => 'required|integer',
             'category_id' => 'required|exists:categories,id',
             'cover' => 'nullable|image',

@@ -17,6 +17,8 @@
                     <th class="p-3">Cover</th>
                     <th class="p-3">Title</th>
                     <th class="p-3">Author</th>
+                    <th class="p-3">ISBN</th>
+                    <th class="p-3">Publisher</th>
                     <th class="p-3">Stock</th>
                     <th class="p-3">Category</th>
                     <th class="p-3 text-center">Action</th>
@@ -39,6 +41,14 @@
 
                         <td class="p-3 text-gray-600">
                             {{ $book->author }}
+                        </td>
+
+                        <td class="p-3 text-gray-600">
+                            {{ $book->isbn }}
+                        </td>
+
+                        <td class="p-3 text-gray-600">
+                            {{ $book->publisher }}
                         </td>
 
                         <td class="p-3">
