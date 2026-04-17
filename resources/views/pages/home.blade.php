@@ -2,68 +2,139 @@
 
 @section('content')
     {{-- HERO --}}
-    <section class="relative mb-10">
+    <section class="min-h-[85vh] flex items-center">
 
-        {{-- SLIDE --}}
-        <div class="h-[400px] md:h-[500px] rounded-xl overflow-hidden relative">
+        <div class="max-w-7xl mx-auto px-4 w-full">
 
-            {{-- Slide 1 --}}
-            <div class="absolute inset-0 bg-gray-300 flex items-center justify-center">
-                <p class="text-gray-600">Hero Image 1</p>
-            </div>
+            <div class="grid md:grid-cols-2 gap-12 items-center mx-5">
 
-            {{-- Overlay --}}
-            <div class="absolute inset-0 bg-black/40 flex items-center">
-                <div class="px-6 md:px-12 text-white max-w-xl">
-                    <h1 class="text-3xl md:text-4xl font-semibold mb-3">
-                        KamiPerpus
+                {{-- TEXT --}}
+                <div class="max-w-lg fade-up">
+
+                    <h1 class="text-4xl md:text-5xl font-semibold leading-tight mb-6">
+                        Discover Books <br>
+                        Without Limits
                     </h1>
 
-                    <p class="text-sm md:text-base mb-5 text-gray-200">
-                        Platform perpustakaan digital untuk memudahkan peminjaman buku secara online.
+                    <p class="text-gray-500 mb-8 text-base md:text-lg">
+                        Jelajahi berbagai buku dari berbagai kategori dan pinjam dengan mudah.
                     </p>
 
-                    <a href="{{ route('books.index') }}" class="bg-white text-black px-4 py-2 rounded text-sm">
-                        Jelajahi Buku
-                    </a>
+                    <div class="flex gap-4 mb-10">
+                        <a href="{{ route('books.index') }}"
+                            class="bg-black text-white px-6 py-3 rounded text-sm hover:opacity-90 transition">
+                            Browse Books
+                        </a>
+
+                        <a href="{{ route('syarat') }}"
+                            class="border px-6 py-3 rounded text-sm hover:bg-gray-100 transition">
+                            Borrow Rules
+                        </a>
+                    </div>
+
+                    {{-- CATEGORY --}}
+                    <div class="overflow-hidden border-t pt-4">
+                        <div class="flex gap-4 animate-marquee whitespace-nowrap text-base text-gray-500">
+
+                            @foreach ($categories as $category)
+                                <span class="px-4 py-1.5 border rounded-full">
+                                    {{ $category->name }}
+                                </span>
+                            @endforeach
+
+                            @foreach ($categories as $category)
+                                <span class="px-4 py-1.5 border rounded-full">
+                                    {{ $category->name }}
+                                </span>
+                            @endforeach
+
+                        </div>
+                    </div>
+
                 </div>
+
+                {{-- IMAGE --}}
+                <div class="flex justify-center md:justify-end fade-up delay-2">
+                    <img src="{{ asset('images/book-philosophy.svg') }}"
+                        class="w-full max-w-md h-[340px] object-contain hover:scale-105 transition duration-300">
+                </div>
+
             </div>
 
         </div>
+
     </section>
 
 
     {{-- ABOUT --}}
-    <section class="mb-10">
-        <div class="bg-white p-6 rounded-xl shadow-sm">
-            <h2 class="text-lg font-semibold mb-2">Tentang KamiPerpus</h2>
+    <section class="mb-24 mt-16 fade-up">
 
-            <p class="text-gray-500 text-sm leading-relaxed max-w-3xl">
-                KamiPerpus adalah platform perpustakaan digital yang dirancang untuk membantu
-                pengguna dalam menemukan, meminjam, dan mengelola buku dengan mudah.
-                Dengan sistem yang sederhana dan modern, pengguna dapat menikmati pengalaman
-                membaca yang lebih efisien.
-            </p>
+        <div class="max-w-7xl mx-auto px-4">
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+
+                {{-- IMAGE --}}
+                <div class="fade-up delay-1">
+                    <img src="{{ asset('images/libray.jpg') }}" class="w-full h-[400px] object-cover rounded-xl shadow-sm">
+                </div>
+
+                {{-- TEXT --}}
+                <div class="fade-up delay-2">
+
+                    <h2 class="text-3xl font-semibold mb-5">
+                        About KamiPerpus
+                    </h2>
+
+                    <p class="text-gray-500 mb-6">
+                        Platform perpustakaan digital untuk memudahkan akses dan peminjaman buku.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4">
+
+                        @foreach ([
+            'Easy Borrow' => 'Pinjam cepat',
+            'Smart System' => 'Auto limit & denda',
+            'Organized' => 'Kategori rapi',
+            'Accessible' => 'Akses kapan saja',
+        ] as $title => $desc)
+                            <div class="border rounded-lg p-4 hover:bg-gray-50 transition hover:-translate-y-1">
+
+                                <p class="font-medium">{{ $title }}</p>
+                                <p class="text-gray-500 text-sm">{{ $desc }}</p>
+
+                            </div>
+                        @endforeach
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
+
     </section>
 
 
-    {{-- PREVIEW CATALOG --}}
-    <section class="mb-10">
+    {{-- CATALOG --}}
+    <section class="mb-20">
 
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold">Katalog Buku</h2>
+        <div class="flex justify-between items-center mb-6 fade-up">
+            <h2 class="text-2xl font-semibold">Katalog Buku</h2>
 
             <a href="{{ route('books.index') }}" class="text-sm text-gray-500">
                 Lihat Semua →
             </a>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            @foreach ($books as $book)
-                <div class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 transition">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
 
-                    {{-- COVER (RASIO BUKU) --}}
+            @foreach ($books as $index => $book)
+                <div class="bg-white rounded-xl shadow-sm p-4 
+                        hover:-translate-y-2 hover:shadow-md 
+                        transition duration-300 fade-up"
+                    style="animation-delay: {{ $index * 0.1 }}s">
+
                     <div class="w-full aspect-[3/4] mb-3">
                         @if ($book->cover)
                             <img src="{{ asset('storage/' . $book->cover) }}" class="w-full h-full object-cover rounded">
@@ -72,84 +143,78 @@
                         @endif
                     </div>
 
-                    {{-- TITLE --}}
-                    <h3 class="text-sm font-semibold mb-1 line-clamp-2">
+                    <h3 class="text-base font-semibold mb-1 line-clamp-2">
                         {{ $book->title }}
                     </h3>
 
-                    {{-- AUTHOR --}}
-                    <p class="text-xs text-gray-500 mb-3">
+                    <p class="text-sm text-gray-500 mb-3">
                         {{ $book->author }}
                     </p>
 
-                    {{-- BUTTON --}}
                     <a href="{{ route('books.show', $book->id) }}"
-                        class="block text-center bg-black text-white text-xs py-1.5 rounded">
+                        class="block text-center bg-black text-white text-sm py-2 rounded hover:opacity-90">
                         Detail
                     </a>
 
                 </div>
             @endforeach
+
         </div>
 
     </section>
 
 
     {{-- CONTACT --}}
-    <section class="mb-10">
+    <section class="mb-24 fade-up">
 
-        <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm">
+        <div class="max-w-7xl mx-auto px-4">
 
-            <h2 class="text-lg font-semibold mb-6">Contact KamiPerpus</h2>
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden grid md:grid-cols-2">
 
-            <div class="grid md:grid-cols-2 gap-8">
+                {{-- LEFT --}}
+                <div class="p-8">
 
-                {{-- LEFT: INFO + LOCATION --}}
-                <div>
+                    <h2 class="text-2xl font-semibold mb-4">
+                        Contact Us
+                    </h2>
 
-                    <div class="text-sm text-gray-600 space-y-2 mb-6">
-                        <p><span class="font-medium">Email:</span> kamiperpus@email.com</p>
-                        <p><span class="font-medium">Instagram:</span> @kamiperpus</p>
-                        <p><span class="font-medium">Phone:</span> 08xxxxxxx</p>
-                        <p><span class="font-medium">Address:</span> Jl. Perpustakaan No. 123, Indonesia</p>
+                    <p class="text-gray-500 mb-8">
+                        Hubungi kami jika ada pertanyaan.
+                    </p>
+
+                    <div class="space-y-4 mb-8 text-sm">
+
+                        <p>📧 kamiperpus@email.com</p>
+                        <p>📷 @kamiperpus</p>
+                        <p>📞 08xxxxxxx</p>
+                        <p>📍 Bandung</p>
+
                     </div>
 
-                    {{-- MAP (Embed Google Maps dummy) --}}
-                    <div class="w-full h-56 rounded overflow-hidden">
-                        <iframe class="w-full h-full border-0"
-                            src="https://maps.google.com/maps?q=Jakarta&t=&z=13&ie=UTF8&iwloc=&output=embed" loading="lazy">
-                        </iframe>
-                    </div>
+                    <form class="space-y-4">
+
+                        <input type="text" placeholder="Nama"
+                            class="w-full border px-4 py-3 rounded focus:ring-1 focus:ring-black">
+
+                        <input type="email" placeholder="Email"
+                            class="w-full border px-4 py-3 rounded focus:ring-1 focus:ring-black">
+
+                        <textarea placeholder="Pesan" class="w-full border px-4 py-3 rounded h-28 focus:ring-1 focus:ring-black"></textarea>
+
+                        <button class="w-full bg-black text-white py-3 rounded hover:opacity-90">
+                            Kirim Pesan
+                        </button>
+
+                    </form>
 
                 </div>
 
-
-                {{-- RIGHT: FORM --}}
-                <form class="space-y-4">
-
-                    <div>
-                        <label class="text-sm font-medium">Name</label>
-                        <input type="text"
-                            class="w-full mt-1 border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black">
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium">Email</label>
-                        <input type="email"
-                            class="w-full mt-1 border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black">
-                    </div>
-
-                    <div>
-                        <label class="text-sm font-medium">Message</label>
-                        <textarea rows="4"
-                            class="w-full mt-1 border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black"></textarea>
-                    </div>
-
-                    <button type="submit" class="bg-black text-white px-4 py-2 rounded text-sm">
-                        Send Message
-                    </button>
-
-                </form>
+                {{-- MAP --}}
+                <div class="h-[420px] md:h-auto">
+                    <iframe src="https://maps.google.com/maps?q=bandung&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        class="w-full h-full border-0">
+                    </iframe>
+                </div>
 
             </div>
 

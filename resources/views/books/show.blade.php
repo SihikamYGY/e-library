@@ -1,72 +1,263 @@
 @extends('layouts.user')
 
 @section('content')
-    <div class="grid md:grid-cols-3 gap-6">
+    <section class="max-w-7xl mx-auto px-4 py-10">
 
-        {{-- LEFT: COVER --}}
-        <div class="bg-white p-4 rounded-xl shadow-sm">
-            <div class="h-64 bg-gray-200 rounded"></div>
-        </div>
+        {{-- FLASH MESSAGE --}}
+        @if (session('success'))
+            <div class="mb-6 p-4 rounded-xl bg-green-50 text-green-700 text-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M5 13l4 4L19 7" />
+                </svg>
+                {{ session('success') }}
+            </div>
+        @endif
 
-        {{-- RIGHT: INFO --}}
-        <div class="md:col-span-2 bg-white p-6 rounded-xl shadow-sm">
+        @if (session('error'))
+            <div class="mb-6 p-4 rounded-xl bg-red-50 text-red-600 text-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                {{ session('error') }}
+            </div>
+        @endif
 
-            <h1 class="text-xl font-semibold mb-2">
-                {{ $book->title }}
-            </h1>
 
-            <p class="text-gray-500 text-sm mb-4">
-                by {{ $book->author }}
-            </p>
+        <div class="grid md:grid-cols-3 gap-12">
 
-            <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+            {{-- COVER --}}
+            <div class="md:col-span-1">
+                <div class="sticky top-24">
+                    <div class="aspect-[3/4] bg-white rounded-2xl shadow-sm overflow-hidden border">
 
-                <div>
-                    <span class="text-gray-500">Category</span>
-                    <p class="font-medium">
-                        {{ $book->category->name ?? '-' }}
-                    </p>
+                        @if ($book->cover)
+                            <img src="{{ asset('storage/' . $book->cover) }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-sm">
+                                No Cover
+                            </div>
+                        @endif
+
+                    </div>
                 </div>
-
-                <div>
-                    <span class="text-gray-500">Stock</span>
-                    <p class="font-medium">
-                        {{ $book->stock }}
-                    </p>
-                </div>
-
             </div>
 
-            {{-- DUMMY SINOPSIS --}}
-            <div class="mb-6">
-                <h2 class="text-sm font-semibold mb-1">Synopsis</h2>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    This is a placeholder synopsis for the book. The actual synopsis
-                    will be added later when the database structure is updated.
+
+            {{-- CONTENT --}}
+            <div class="md:col-span-2">
+
+                {{-- TITLE --}}
+                <h1 class="text-3xl md:text-4xl font-semibold leading-tight mb-2">
+                    {{ $book->title }}
+                </h1>
+
+                <p class="text-gray-500 text-sm mb-6">
+                    by {{ $book->author }}
                 </p>
+
+                {{-- META --}}
+                <div class="flex flex-wrap gap-2 mb-8 text-xs">
+
+                    <span class="px-3 py-1 bg-gray-100 rounded-full flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M4 19.5V4.5A1.5 1.5 0 015.5 3h13A1.5 1.5 0 0120 4.5v15" />
+                        </svg>
+                        {{ $book->category->name ?? 'Uncategorized' }}
+                    </span>
+
+                    <span class="px-3 py-1 bg-gray-100 rounded-full flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 6v6l4 2" />
+                        </svg>
+                        Stock: {{ $book->stock }}
+                    </span>
+
+                </div>
+
+                {{-- SYNOPSIS --}}
+
+                <p class="text-sm text-gray-600 leading-relaxed mb-8">
+                    {{ $book->synopsis ?? 'No synopsis available.' }}
+                </p>
+
+                {{-- INFO BOX --}}
+                <div class="bg-gray-50 border rounded-2xl p-5 mb-8 text-sm text-gray-600 space-y-2">
+
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M12 8v4l3 3" />
+                            <circle cx="12" cy="12" r="9" />
+                        </svg>
+                        Loan duration: 7 days
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M12 8v4l3 3" />
+                            <circle cx="12" cy="12" r="9" />
+                        </svg>
+                        Max 3 active loans per user
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M12 8v4l3 3" />
+                            <circle cx="12" cy="12" r="9" />
+                        </svg>
+                        Late return may incur fine
+                    </div>
+
+                </div>
+
+                {{-- ACTION --}}
+                <div class="flex gap-3">
+
+                    @auth
+
+                        @if ($book->stock > 0)
+                            <form id="borrowForm" action="{{ route('loans.store', $book->id) }}" method="POST">
+                                @csrf
+
+                                <button id="borrowBtn"
+                                    class="bg-black hover:bg-gray-900 text-white px-6 py-3 rounded-xl text-sm flex items-center gap-2 transition disabled:opacity-60">
+
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path d="M12 5v14M5 12h14" />
+                                    </svg>
+
+                                    <span id="borrowText">Borrow Book</span>
+
+                                    <svg id="loadingIcon" class="w-4 h-4 hidden animate-spin" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" stroke="white" stroke-width="4"
+                                            opacity="0.25" />
+                                        <path fill="white" d="M4 12a8 8 0 018-8v8z" />
+                                    </svg>
+
+                                </button>
+                            </form>
+                        @else
+                            <button disabled
+                                class="bg-gray-100 text-gray-400 px-6 py-3 rounded-xl text-sm flex items-center gap-2">
+
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M12 6v6l4 2" />
+                                </svg>
+
+                                Out of Stock
+                            </button>
+                        @endif
+                    @else
+                        <button onclick="openLoginModal()"
+                            class="bg-black text-white px-6 py-3 rounded-xl text-sm flex items-center gap-2">
+
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M16 21v-2a4 4 0 00-8 0v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+
+                            Login to Borrow
+                        </button>
+
+                    @endauth
+
+                    <a href="{{ route('books.index') }}"
+                        class="border px-6 py-3 rounded-xl text-sm hover:bg-gray-50 transition">
+                        Back
+                    </a>
+
+                </div>
+
             </div>
 
-            {{-- BUTTON --}}
-            @auth
-                @if ($book->stock > 0)
-                    <form action="{{ route('loans.store', $book->id) }}" method="POST">
-                        @csrf
-                        <button class="bg-black text-white px-4 py-2 rounded text-sm">
-                            Borrow Book
-                        </button>
-                    </form>
-                @else
-                    <button class="bg-gray-300 text-gray-500 px-4 py-2 rounded text-sm cursor-not-allowed">
-                        Out of Stock
-                    </button>
-                @endif
-            @else
-                <button onclick="alert('Login dulu buat pinjam buku')" class="bg-black text-white px-4 py-2 rounded text-sm">
-                    Borrow Book
-                </button>
-            @endauth
-
         </div>
+    </section>
 
-    </div>
+
+    {{-- NETFLIX STYLE RECOMMENDATION (CLEAN UI) --}}
+    @if ($recommendedBooks->count())
+        <section class="mt-14">
+
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-xl font-semibold">More like this</h2>
+
+                <span class="text-xs text-gray-400 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M13 16h-1v-4h-1m1-4h.01" />
+                        <circle cx="12" cy="12" r="9" />
+                    </svg>
+                    Recommended for you
+                </span>
+            </div>
+
+            <div class="flex gap-5 overflow-x-auto pb-4">
+
+                @foreach ($recommendedBooks as $rec)
+                    <a href="{{ route('books.show', $rec->id) }}"
+                        class="min-w-[210px] md:min-w-[230px] bg-white border rounded-2xl overflow-hidden
+                      hover:-translate-y-1 hover:shadow-md transition duration-200 shrink-0">
+
+                        {{-- COVER --}}
+                        <div class="aspect-[3/4] bg-gray-100">
+
+                            @if ($rec->cover)
+                                <img src="{{ asset('storage/' . $rec->cover) }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                                    No Cover
+                                </div>
+                            @endif
+
+                        </div>
+
+                        {{-- INFO --}}
+                        <div class="p-3">
+
+                            <h3 class="text-sm font-semibold line-clamp-2 leading-snug">
+                                {{ $rec->title }}
+                            </h3>
+
+                            <p class="text-xs text-gray-500 mt-1">
+                                {{ $rec->author }}
+                            </p>
+
+                            {{-- META --}}
+                            <div class="mt-3 flex items-center justify-between text-[11px] text-gray-400">
+
+                                <span class="truncate max-w-[120px]">
+                                    {{ $rec->category->name ?? 'Uncategorized' }}
+                                </span>
+
+                                <span class="flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path d="M4 19.5V4.5A1.5 1.5 0 015.5 3h13A1.5 1.5 0 0120 4.5v15" />
+                                    </svg>
+
+                                    {{ $rec->loans_count ?? 0 }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </a>
+                @endforeach
+
+            </div>
+
+        </section>
+    @endif
+
+
+    <script>
+        document.getElementById('borrowForm')?.addEventListener('submit', function() {
+            document.getElementById('borrowText').innerText = 'Processing...'
+            document.getElementById('loadingIcon').classList.remove('hidden')
+            document.getElementById('borrowBtn').disabled = true
+        })
+    </script>
 @endsection

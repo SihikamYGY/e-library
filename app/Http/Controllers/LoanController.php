@@ -11,19 +11,19 @@ class LoanController extends Controller
     {
         $user = auth()->user();
 
-        // 🚫 STOCK
-        if ($book->stock <= 0) {
-            return back()->with('error', 'Stock buku habis!');
-        }
-
-        // 🔥 BLACKLIST CHECK
+        // 1. BLACKLIST FIRST
         $this->checkBlacklist($user);
 
         if ($user->is_blacklisted) {
             return back()->with('error', 'Kamu diblacklist karena telat!');
         }
 
-        // 📚 MAX LOAN = 3
+        // 2. STOCK CHECK
+        if ($book->stock <= 0) {
+            return back()->with('error', 'Stock buku habis!');
+        }
+
+        // 3. MAX LOAN CHECK
         $activeLoans = Loan::where('user_id', $user->id)
             ->whereIn('status', ['pending', 'approved', 'pending_return'])
             ->count();
@@ -32,17 +32,17 @@ class LoanController extends Controller
             return back()->with('error', 'Maksimal 3 buku!');
         }
 
-        // ❌ SAME BOOK
+        // 4. DUPLICATE CHECK (FIXED CONSISTENT)
         $alreadyBorrowed = Loan::where('user_id', $user->id)
             ->where('book_id', $book->id)
-            ->whereIn('status', ['pending', 'approved'])
+            ->whereIn('status', ['pending', 'approved', 'pending_return'])
             ->exists();
 
         if ($alreadyBorrowed) {
             return back()->with('error', 'Kamu sudah meminjam buku ini!');
         }
 
-        // ✅ CREATE
+        // 5. CREATE LOAN
         Loan::create([
             'user_id' => $user->id,
             'book_id' => $book->id,

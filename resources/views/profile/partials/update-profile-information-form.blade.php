@@ -57,15 +57,17 @@
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)"
-                required autofocus autocomplete="name" />
+            <x-text-input id="name" name="name" type="text"
+                class="mt-1 block w-full rounded-lg border-gray-200 focus:ring-black focus:border-black"
+                :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
         <div>
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)"
-                required autocomplete="username" />
+            <x-text-input id="email" name="email" type="email"
+                class="mt-1 block w-full rounded-lg border-gray-200 focus:ring-black focus:border-black"
+                :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !$user->hasVerifiedEmail())
@@ -97,20 +99,29 @@
             @endif
         </div>
     </form>
+
+    <div class="space-y-4">
+
+        <h2 class="text-lg font-semibold">Profile Information</h2>
+        <p class="text-sm text-gray-500">
+            Update your name, email, and avatar
+        </p>
+
+        {{-- FORM BAWAAN BREEZE DI SINI --}}
 </section>
 
 <script>
-document.getElementById('avatar').addEventListener('change', function(e) {
-    const file = e.target.files[0];
+    document.getElementById('avatar').addEventListener('change', function(e) {
+        const file = e.target.files[0];
 
-    if (file) {
-        const reader = new FileReader();
+        if (file) {
+            const reader = new FileReader();
 
-        reader.onload = function(e) {
-            document.getElementById('avatarPreview').src = e.target.result;
+            reader.onload = function(e) {
+                document.getElementById('avatarPreview').src = e.target.result;
+            }
+
+            reader.readAsDataURL(file);
         }
-
-        reader.readAsDataURL(file);
-    }
-});
+    });
 </script>

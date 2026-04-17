@@ -15,19 +15,21 @@ class DatabaseSeeder extends Seeder
     {
         // 🔑 ADMIN
         $admin = User::create([
-            'name' => 'Admin',
+            'name' => 'Admin KamiPerpus',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin123'),
             'role' => 'admin',
         ]);
 
-        // 👤 USERS (NAMA INDONESIA)
+        // 👤 USERS (REALISTIC INDONESIAN)
         $users = [
             ['name' => 'Budi Santoso', 'email' => 'budi@gmail.com'],
             ['name' => 'Siti Aminah', 'email' => 'siti@gmail.com'],
             ['name' => 'Andi Pratama', 'email' => 'andi@gmail.com'],
             ['name' => 'Dewi Lestari', 'email' => 'dewi@gmail.com'],
             ['name' => 'Rizky Maulana', 'email' => 'rizky@gmail.com'],
+            ['name' => 'Maya Putri', 'email' => 'maya@gmail.com'],
+            ['name' => 'Fajar Nugroho', 'email' => 'fajar@gmail.com'],
         ];
 
         foreach ($users as $u) {
@@ -39,14 +41,24 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 📚 CATEGORIES
-        Category::insert([
-            ['name' => 'Novel'],
-            ['name' => 'Programming'],
-            ['name' => 'History'],
-        ]);
+        // 🏷 CATEGORIES (MORE COMPLETE)
+        $categories = [
+            'Novel',
+            'Programming',
+            'History',
+            'Self Improvement',
+            'Science',
+            'Fantasy',
+            'Business',
+        ];
 
-        // 📖 BOOKS (udah include isbn & publisher)
+        foreach ($categories as $cat) {
+            Category::create([
+                'name' => $cat,
+            ]);
+        }
+
+        // 📚 BOOKS (WITH SYNOPSIS)
         $bookData = [
             [
                 'title' => 'Laskar Pelangi',
@@ -55,6 +67,7 @@ class DatabaseSeeder extends Seeder
                 'publisher' => 'Bentang Pustaka',
                 'stock' => 10,
                 'category_id' => 1,
+                'synopsis' => 'Kisah perjuangan anak-anak di Belitung yang berjuang mendapatkan pendidikan di tengah keterbatasan.',
             ],
             [
                 'title' => 'Bumi',
@@ -63,6 +76,7 @@ class DatabaseSeeder extends Seeder
                 'publisher' => 'Gramedia',
                 'stock' => 8,
                 'category_id' => 1,
+                'synopsis' => 'Perjalanan dunia paralel yang penuh misteri, petualangan, dan kekuatan yang tidak biasa.',
             ],
             [
                 'title' => 'Atomic Habits',
@@ -70,7 +84,8 @@ class DatabaseSeeder extends Seeder
                 'isbn' => '9780735211292',
                 'publisher' => 'Penguin Random House',
                 'stock' => 12,
-                'category_id' => 3,
+                'category_id' => 4,
+                'synopsis' => 'Panduan membangun kebiasaan kecil yang berdampak besar untuk meningkatkan kualitas hidup.',
             ],
             [
                 'title' => 'Clean Code',
@@ -79,6 +94,7 @@ class DatabaseSeeder extends Seeder
                 'publisher' => 'Prentice Hall',
                 'stock' => 7,
                 'category_id' => 2,
+                'synopsis' => 'Panduan menulis kode yang bersih, mudah dibaca, dan mudah dirawat dalam pengembangan software.',
             ],
             [
                 'title' => 'Sejarah Dunia',
@@ -87,6 +103,25 @@ class DatabaseSeeder extends Seeder
                 'publisher' => 'Narasi',
                 'stock' => 5,
                 'category_id' => 3,
+                'synopsis' => 'Ringkasan sejarah dunia dari awal peradaban hingga era modern dengan gaya naratif.',
+            ],
+            [
+                'title' => 'The Psychology of Money',
+                'author' => 'Morgan Housel',
+                'isbn' => '9780857197689',
+                'publisher' => 'Harriman House',
+                'stock' => 9,
+                'category_id' => 7,
+                'synopsis' => 'Cara berpikir manusia tentang uang, keputusan finansial, dan kebiasaan yang mempengaruhi kekayaan.',
+            ],
+            [
+                'title' => 'Harry Potter and the Philosopher’s Stone',
+                'author' => 'J.K. Rowling',
+                'isbn' => '9780747532699',
+                'publisher' => 'Bloomsbury',
+                'stock' => 6,
+                'category_id' => 6,
+                'synopsis' => 'Seorang anak yatim menemukan dunia sihir dan takdirnya sebagai penyihir besar.',
             ],
         ];
 
@@ -94,7 +129,8 @@ class DatabaseSeeder extends Seeder
             Book::create($data);
         }
 
-        // 🔁 LOANS (REALISTIC FLOW)
+        // 📖 LOANS (REALISTIC FLOW)
+
         $books = Book::all();
         $users = User::where('role', 'user')->get();
 
@@ -114,13 +150,13 @@ class DatabaseSeeder extends Seeder
             'due_date' => now()->addDays(5),
         ]);
 
-        // 3️⃣ Pending Return
+        // 3️⃣ Pending Return (OVERDUE)
         Loan::create([
             'user_id' => $users[2]->id,
             'book_id' => $books->random()->id,
             'status' => 'pending_return',
-            'loan_date' => now()->subDays(8),
-            'due_date' => now()->subDays(2),
+            'loan_date' => now()->subDays(10),
+            'due_date' => now()->subDays(3),
         ]);
 
         // 4️⃣ Returned
@@ -128,9 +164,9 @@ class DatabaseSeeder extends Seeder
             'user_id' => $users[3]->id,
             'book_id' => $books->random()->id,
             'status' => 'returned',
-            'loan_date' => now()->subDays(10),
-            'due_date' => now()->subDays(5),
-            'return_date' => now()->subDays(3),
+            'loan_date' => now()->subDays(12),
+            'due_date' => now()->subDays(7),
+            'return_date' => now()->subDays(4),
         ]);
 
         // 5️⃣ Rejected

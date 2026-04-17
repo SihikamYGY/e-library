@@ -48,6 +48,7 @@ class AdminBookController extends Controller
             'isbn' => 'required',
             'publisher' => 'required',
             'stock' => 'required|integer',
+            'synopsis' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'cover' => 'nullable|image',
         ]);
@@ -79,6 +80,7 @@ class AdminBookController extends Controller
             'isbn' => 'required',
             'publisher' => 'required',
             'stock' => 'required|integer',
+            'synopsis' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'cover' => 'nullable|image',
         ]);
