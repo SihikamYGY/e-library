@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+
+class CheckOverdueLoans extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:check-overdue-loans';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        $loans = Loan::where('status', 'approved')
+            ->where('due_date', '<', now())
+            ->get();
+
+        foreach ($loans as $loan) {
+            $loan->user->update([
+                'is_blacklisted' => true,
+            ]);
+        }
+    }
+}

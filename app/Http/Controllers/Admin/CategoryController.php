@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -13,9 +14,19 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::latest()->get();
+        $categories = Category::withCount('books')->latest()->get();
 
-        return view('admin.categories.index', compact('categories'));
+        // TOP CATEGORY
+        $topCategory = $categories->sortByDesc('books_count')->first();
+
+        // TOTAL BOOKS
+        $totalBooks = Book::count();
+
+        return view('admin.categories.index', compact(
+            'categories',
+            'topCategory',
+            'totalBooks'
+        ));
     }
 
     /**
@@ -32,11 +43,11 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255',
         ]);
 
         Category::create([
-            'name' => $request->name
+            'name' => $request->name,
         ]);
 
         return redirect()
@@ -58,11 +69,11 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255',
         ]);
 
         $category->update([
-            'name' => $request->name
+            'name' => $request->name,
         ]);
 
         return redirect()

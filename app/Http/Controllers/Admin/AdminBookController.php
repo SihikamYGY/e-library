@@ -9,11 +9,28 @@ use Illuminate\Http\Request;
 
 class AdminBookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::with('category')->latest()->get();
+        $query = Book::with('category');
 
-        return view('admin.books.index', compact('books'));
+        // 🔍 Search
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%'.$request->search.'%')
+                    ->orWhere('author', 'like', '%'.$request->search.'%')
+                    ->orWhere('isbn', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        // 🎯 Filter Category
+        if ($request->category) {
+            $query->where('category_id', $request->category);
+        }
+
+        $books = $query->latest()->paginate(5);
+        $categories = Category::all();
+
+        return view('admin.books.index', compact('books', 'categories'));
     }
 
     public function create()

@@ -36,4 +36,33 @@ class Loan extends Model
 
         return $value;
     }
+
+    public function isOverdue()
+    {
+        return $this->status === 'approved' && $this->due_date < now();
+    }
+
+    public function calculateFine()
+    {
+        if (! $this->due_date || $this->status !== 'approved') {
+            return 0;
+        }
+
+        if (now()->lte($this->due_date)) {
+            return 0;
+        }
+
+        $daysLate = now()->diffInDays($this->due_date);
+
+        // 💰 Progressive fine
+        if ($daysLate <= 3) {
+            return $daysLate * 1000;
+        }
+
+        if ($daysLate <= 7) {
+            return (3 * 1000) + (($daysLate - 3) * 2000);
+        }
+
+        return (3 * 1000) + (4 * 2000) + (($daysLate - 7) * 5000);
+    }
 }

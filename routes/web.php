@@ -5,19 +5,26 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminLoanController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| PUBLIC
+| PUBLIC (GUEST FRIENDLY)
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// 🏠 Homepage
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// 📚 Books
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
+// 📜 Syarat
+Route::view('/syarat', 'pages.syarat')->name('syarat');
 
 /*
 |--------------------------------------------------------------------------
@@ -30,43 +37,38 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
 
-    return redirect('/books');
+    return redirect()->route('books.index');
 })->middleware(['auth'])->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
-| PROFILE (AUTH)
+| AUTH ONLY (USER)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-/*
-|--------------------------------------------------------------------------
-| USER AREA
-|--------------------------------------------------------------------------
-*/
+    // 📋 My Loans
+    Route::get('/my-loans', [LoanController::class, 'myLoans'])
+        ->name('loans.my');
 
-Route::get('/books', [BookController::class, 'index'])->name('books.index');
-Route::get('/books/{id}', [BookController::class, 'show'])->name('books.show');
-
-Route::middleware('auth')->group(function () {
-
-    // 📥 Request loan
+    // 📥 Request Loan
     Route::post('/loans/{book}', [LoanController::class, 'store'])
         ->name('loans.store');
 
-    // 🔁 Request return
+    // 🔁 Request Return
     Route::post('/loans/{loan}/return', [LoanController::class, 'returnRequest'])
         ->name('loans.return');
 
-    // 📋 My loans
-    Route::get('/my-loans', [LoanController::class, 'myLoans'])
-        ->name('loans.my');
+    /*
+    |--------------------------------------------------------------------------
+    | PROFILE
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 /*
@@ -88,7 +90,7 @@ Route::middleware(['auth', 'admin'])
         Route::resource('books', AdminBookController::class);
         Route::resource('categories', CategoryController::class);
 
-        // 🔥 LOANS SYSTEM (FIXED)
+        // 🔥 Loans Management
         Route::get('/loans', [AdminLoanController::class, 'index'])
             ->name('loans.index');
 
@@ -100,6 +102,10 @@ Route::middleware(['auth', 'admin'])
 
         Route::post('/loans/{loan}/approve-return', [AdminLoanController::class, 'approveReturn'])
             ->name('loans.approveReturn');
+
+        // 🔓 Unblacklist
+        Route::post('/unblacklist/{user}', [AdminController::class, 'unblacklist'])
+            ->name('unblacklist');
     });
 
 require __DIR__.'/auth.php';

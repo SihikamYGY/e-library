@@ -1,101 +1,79 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="max-w-2xl mx-auto">
 
-        <h1 class="text-2xl font-bold text-gray-800 mb-6">
-            ✏️ Edit Book
-        </h1>
+<div class="max-w-2xl mx-auto">
 
-        <div class="bg-white shadow rounded-lg p-6">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6">
+        Edit Book
+    </h1>
 
-            <form action="{{ route('admin.books.update', $book->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+    <div class="bg-white p-6 rounded-xl shadow-sm">
 
-                {{-- Title --}}
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Title
-                    </label>
-                    <input type="text" name="title" value="{{ $book->title }}"
-                        class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        <form action="{{ route('admin.books.update', $book->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            @php
+                $inputClass = "w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none";
+            @endphp
+
+            <div class="grid gap-4">
+
+                <input type="text" name="title" value="{{ $book->title }}" class="{{ $inputClass }}">
+                <input type="text" name="author" value="{{ $book->author }}" class="{{ $inputClass }}">
+                <input type="text" name="isbn" value="{{ $book->isbn }}" class="{{ $inputClass }}">
+                <input type="text" name="publisher" value="{{ $book->publisher }}" class="{{ $inputClass }}">
+                <input type="number" name="stock" value="{{ $book->stock }}" class="{{ $inputClass }}">
+
+                <select name="category_id" class="{{ $inputClass }}">
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}"
+                            {{ $book->category_id == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                {{-- COVER --}}
+                <div>
+                    <input type="file" id="coverInput" name="cover" class="{{ $inputClass }}">
+
+                    <img id="previewImage"
+                        src="{{ $book->cover ? asset('storage/'.$book->cover) : '' }}"
+                        class="mt-3 w-24 h-32 object-cover rounded-lg {{ $book->cover ? '' : 'hidden' }}">
                 </div>
 
-                {{-- Author --}}
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Author
-                    </label>
-                    <input type="text" name="author" value="{{ $book->author }}"
-                        class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                </div>
+            </div>
 
-                {{-- ISBN --}}
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        ISBN
-                    </label>
-                    <input type="text" name="isbn" value="{{ $book->isbn }}"
-                        class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                </div>
+            <div class="flex justify-between mt-6">
 
-                {{-- Publisher --}}
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Publisher
-                    </label>
-                    <input type="text" name="publisher" value="{{ $book->publisher }}"
-                        class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                </div>
+                <a href="{{ route('admin.books.index') }}"
+                    class="text-gray-500 hover:text-gray-700">
+                    ← Back
+                </a>
 
-                {{-- Stock --}}
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Stock
-                    </label>
-                    <input type="number" name="stock" value="{{ $book->stock }}"
-                        class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                </div>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
+                    Update
+                </button>
 
-                {{-- Categories --}}
-                <div class="mb-4">
-                    <label class="block mb-1 font-medium">Category</label>
+            </div>
 
-                    <select name="category_id" class="w-full border p-2 rounded">
-
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" {{ $book->category_id == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                        @endforeach
-
-                    </select>
-                </div>
-
-                {{-- Cover --}}
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Cover
-                    </label>
-                    <input type="file" name="cover" class="w-full border p-2 rounded">
-                </div>
-
-                {{-- Buttons --}}
-                <div class="flex justify-between items-center mt-6">
-
-                    <a href="{{ route('admin.books.index') }}" class="text-gray-500 hover:text-gray-700">
-                        ← Back
-                    </a>
-
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow">
-                        Update Book
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
+        </form>
     </div>
+</div>
+
+<script>
+    const input = document.getElementById('coverInput');
+    const preview = document.getElementById('previewImage');
+
+    input.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.classList.remove('hidden');
+        }
+    });
+</script>
+
 @endsection
