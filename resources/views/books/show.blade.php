@@ -179,26 +179,33 @@
 
     {{-- NETFLIX STYLE RECOMMENDATION (CLEAN UI) --}}
     @if ($recommendedBooks->count())
-        <section class="mt-14">
+        <section class="mt-16">
 
-            <div class="flex items-center justify-between mb-5">
-                <h2 class="text-xl font-semibold">More like this</h2>
+            {{-- HEADER --}}
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-semibold tracking-tight">
+                    More like this
+                </h2>
 
-                <span class="text-xs text-gray-400 flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M13 16h-1v-4h-1m1-4h.01" />
-                        <circle cx="12" cy="12" r="9" />
+                <span class="text-xs text-gray-400 flex items-center gap-1.5">
+
+                    {{-- ICON CLEAN --}}
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path d="M12 6v6l4 2"></path>
+                        <circle cx="12" cy="12" r="9"></circle>
                     </svg>
+
                     Recommended for you
                 </span>
             </div>
 
-            <div class="flex gap-5 overflow-x-auto pb-4">
+            {{-- LIST --}}
+            <div class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory">
 
                 @foreach ($recommendedBooks as $rec)
                     <a href="{{ route('books.show', $rec->id) }}"
-                        class="min-w-[210px] md:min-w-[230px] bg-white border rounded-2xl overflow-hidden
-                      hover:-translate-y-1 hover:shadow-md transition duration-200 shrink-0">
+                        class="min-w-[260px] md:min-w-[280px] bg-white border rounded-2xl overflow-hidden
+                       hover:-translate-y-1 hover:shadow-md transition duration-200 snap-start">
 
                         {{-- COVER --}}
                         <div class="aspect-[3/4] bg-gray-100">
@@ -206,7 +213,7 @@
                             @if ($rec->cover)
                                 <img src="{{ asset('storage/' . $rec->cover) }}" class="w-full h-full object-cover">
                             @else
-                                <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                                <div class="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                                     No Cover
                                 </div>
                             @endif
@@ -214,30 +221,32 @@
                         </div>
 
                         {{-- INFO --}}
-                        <div class="p-3">
+                        <div class="p-4">
 
-                            <h3 class="text-sm font-semibold line-clamp-2 leading-snug">
+                            <h3 class="text-base font-semibold line-clamp-2 leading-snug">
                                 {{ $rec->title }}
                             </h3>
 
-                            <p class="text-xs text-gray-500 mt-1">
+                            <p class="text-sm text-gray-500 mt-1">
                                 {{ $rec->author }}
                             </p>
 
                             {{-- META --}}
-                            <div class="mt-3 flex items-center justify-between text-[11px] text-gray-400">
+                            <div class="mt-4 flex items-center justify-between text-xs text-gray-400">
 
-                                <span class="truncate max-w-[120px]">
+                                <span class="truncate max-w-[140px]">
                                     {{ $rec->category->name ?? 'Uncategorized' }}
                                 </span>
 
-                                <span class="flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2"
+                                <span class="flex items-center gap-1.5">
+
+                                    {{-- ICON CLEAN --}}
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8"
                                         viewBox="0 0 24 24">
                                         <path d="M4 19.5V4.5A1.5 1.5 0 015.5 3h13A1.5 1.5 0 0120 4.5v15" />
                                     </svg>
 
-                                    {{ $rec->loans_count ?? 0 }}
+                                    {{ $rec->loans_count }}
                                 </span>
 
                             </div>
